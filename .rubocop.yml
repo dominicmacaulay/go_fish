@@ -1,0 +1,5 @@
+Metrics/MethodLength:
+  Max: 7
+
+Gemspec/Metrics/MethodLength:
+  Max: 7
