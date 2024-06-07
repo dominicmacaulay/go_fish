@@ -30,4 +30,8 @@ class Deck
   def deal
     @cards.shift
   end
+
+  def shuffle(seed = Random.new)
+    cards.shuffle!(random: seed)
+  end
 end

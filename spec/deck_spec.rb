@@ -16,7 +16,7 @@ RSpec.describe Deck do
     end
   end
 
-  describe 'deal' do
+  describe '#deal' do
     before do
       @deck = described_class.new
       @top_card = @deck.cards[0]
@@ -25,9 +25,18 @@ RSpec.describe Deck do
       expect(@deck.deal).to equal @top_card
     end
     it 'deals unique cards' do
-        @deck.deal
-        new_card = @deck.deal
-        expect(new_card).not_to equal @top_card
+      @deck.deal
+      new_card = @deck.deal
+      expect(new_card).not_to equal @top_card
+    end
+  end
+
+  describe 'shuffle' do
+    it "shuffles the deck's cards" do
+      deck1 = described_class.new
+      deck2 = described_class.new
+      deck1.shuffle(Random.new(1000))
+      expect(deck1.cards).not_to eql(deck2.cards)
     end
   end
 end
