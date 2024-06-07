@@ -15,4 +15,19 @@ RSpec.describe Deck do
       expect(deck.cards.length).to eql 104
     end
   end
+
+  describe 'deal' do
+    before do
+      @deck = described_class.new
+      @top_card = @deck.cards[0]
+    end
+    it 'returns one card from its cards array' do
+      expect(@deck.deal).to equal @top_card
+    end
+    it 'deals unique cards' do
+        @deck.deal
+        new_card = @deck.deal
+        expect(new_card).not_to equal @top_card
+    end
+  end
 end

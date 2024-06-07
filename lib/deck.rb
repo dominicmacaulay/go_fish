@@ -26,4 +26,8 @@ class Deck
       end
     end
   end
+
+  def deal
+    @cards.shift
+  end
 end
