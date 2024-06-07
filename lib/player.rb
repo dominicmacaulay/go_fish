@@ -11,4 +11,10 @@ class Player
   def add_to_hand(cards)
     hand.push(*cards)
   end
+
+  def remove_cards(rank)
+    hand.map do |card|
+        hand.delete(card) if card.rank == rank
+    end
+  end
 end
