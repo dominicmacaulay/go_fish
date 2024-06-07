@@ -12,8 +12,8 @@ class Card
     @suit = suit
   end
 
-  def numerical_value
-    @numerical_value ||= RANKS.index(rank)
+  def value
+    @value ||= RANKS.index(rank)
   end
 
   # possibly convert this to the original version and make a rank? method
