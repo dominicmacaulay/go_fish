@@ -51,7 +51,7 @@ RSpec.describe Player do
     end
   end
 
-  describe 'remove_cards' do
+  describe '#remove_cards' do
     before do
       @card1 = MockCard.new('2', 'Hearts')
       @card2 = MockCard.new('5', 'Hearts')
@@ -74,6 +74,22 @@ RSpec.describe Player do
       received_cards = player.remove_cards('2')
       expect(received_cards).to include @card1
       expect(received_cards).to include card3
+    end
+  end
+
+  describe '#hand_has_rank?' do
+    before do
+      card1 = MockCard.new('2', 'Hearts')
+      card2 = MockCard.new('2', 'Spades')
+      card3 = MockCard.new('4', 'Spades')
+      player.add_to_hand([card1, card2, card3])
+    end
+    it 'returns true if the player has any cards with the given rank in hand' do
+      expect(player.hand_has_rank?('2')).to be true
+      expect(player.hand_has_rank?('4')).to be true
+    end
+    it 'returns false if the player does not have any cards with the given rank in hand' do
+      expect(player.hand_has_rank?('3')).to be false
     end
   end
 end
