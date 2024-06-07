@@ -4,26 +4,23 @@
 class Player
   attr_accessor :name, :books, :hand
 
-  def initialize(name = 'A Mysterious Figure')
+  def initialize(name:, hand: [], books: [])
     @name = name
-    @books = []
-    @hand = []
+    @books = books
+    @hand = hand
   end
 
   def add_to_hand(cards)
     hand.push(*cards)
   end
 
-  def remove_cards(rank)
+  def remove_by_rank(rank)
     hand.map do |card|
       hand.delete(card) if card.rank == rank
     end
   end
 
   def hand_has_rank?(given_rank)
-    hand.each do |card|
-      return true if card.rank == given_rank
-    end
-    false
+    hand.select { |card| card.rank == given_rank }.count.positive?
   end
 end

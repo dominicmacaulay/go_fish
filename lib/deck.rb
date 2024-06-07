@@ -6,25 +6,9 @@ require_relative 'card'
 class Deck
   attr_reader :cards, :stack_number
 
-  def initialize(stack_number = 1, cards = nil)
+  def initialize(stack_number: 1, cards: nil)
     @stack_number = stack_number
     @cards = cards.nil? ? create_deck : cards
-  end
-
-  def create_deck
-    cards = []
-    stack_number.times do
-      cards.push(*retrieve_one_deck)
-    end
-    cards
-  end
-
-  def retrieve_one_deck
-    Card::SUITS.flat_map do |suit|
-      Card::RANKS.map do |rank|
-        Card.new(rank, suit)
-      end
-    end
   end
 
   def deal
@@ -33,5 +17,19 @@ class Deck
 
   def shuffle(seed = Random.new)
     cards.shuffle!(random: seed)
+  end
+
+  private
+
+  def create_deck
+    stack_number.times.flat_map { retrieve_one_deck }
+  end
+
+  def retrieve_one_deck
+    Card::SUITS.flat_map do |suit|
+      Card::RANKS.map do |rank|
+        Card.new(rank: rank, suit: suit)
+      end
+    end
   end
 end

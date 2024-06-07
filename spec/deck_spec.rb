@@ -10,8 +10,8 @@ RSpec.describe Deck do
       deck = described_class.new
       expect(deck.cards.length).to eql 52
     end
-    it 'creates a deck of 64 cards when I indicate I want 2 stacks' do
-      deck = described_class.new(2)
+    it 'creates a deck of 104 cards when I indicate I want 2 stacks' do
+      deck = described_class.new(stack_number: 2)
       expect(deck.cards.length).to eql 104
     end
   end
