@@ -13,6 +13,8 @@ class Card
     @numerical_value = RANKS.index(rank)
   end
 
+  # possibly convert this to the original version and make a rank? method
+  # which would carry out this comparison
   def ==(other)
     other.rank == rank
   end

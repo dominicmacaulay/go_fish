@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/card'
-require_relative 'spec_helper'
+require 'spec_helper'
 
 # test the card functionality
 RSpec.describe Card do # rubocop:disable Metrics/BlockLength

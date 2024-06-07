@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../lib/deck'
-require_relative 'spec_helper'
+require 'spec_helper'
 
 # test the deck class
 RSpec.describe Deck do
@@ -31,7 +31,7 @@ RSpec.describe Deck do
     end
   end
 
-  describe 'shuffle' do
+  describe '#shuffle' do
     it "shuffles the deck's cards" do
       deck1 = described_class.new
       deck2 = described_class.new
