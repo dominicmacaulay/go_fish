@@ -71,9 +71,17 @@ RSpec.describe Game do
       expect(game.play_round(this_player: player1, other_player: player2, rank: '8')).to eql message
     end
     it 'returns Go Fish and draws from the pile if the other player doesn not have the rank' do
-        message = 'Go Fish! You took a Jack of Hearts from the pond.'
-        game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
-        expect(game.play_round(this_player: player2, other_player: player1, rank: '9')).to eql message
-      end
+      message = 'Go Fish! You took a Jack of Hearts from the pond.'
+      game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
+      expect(game.play_round(this_player: player2, other_player: player1, rank: '9')).to eql message
+    end
+    it 'changes the player if the player has not gained cards' do
+      game.play_round(this_player: player1, other_player: player2, rank: '8')
+      expect(game.current_player).to be player2
+    end
+    it 'does not change the player if they gained cards' do
+      game.play_round(this_player: player1, other_player: player2, rank: '4')
+      expect(game.current_player).to be player1
+    end
   end
 end

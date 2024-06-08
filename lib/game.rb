@@ -6,10 +6,12 @@ require_relative 'deck'
 # go fish game class
 class Game
   attr_reader :players, :deck_cards
+  attr_accessor :current_player
 
   def initialize(players, deck_cards = nil)
     @players = players
     @deck_cards = deck_cards
+    @current_player = @players.first
   end
 
   def deck
@@ -28,9 +30,28 @@ class Game
   end
 
   def play_round(this_player:, other_player:, rank:)
-    make_transaction(this_player, other_player, rank)
-    # switch to the next player if the player's hand has not changed
+    player_rank_count = this_player.rank_count(rank).dup
+    message = make_transaction(this_player, other_player, rank)
+    switch_player if player_gained_rank?(this_player, rank, player_rank_count)
     message
+  end
+
+  def switch_player
+    current_index = players.index(current_player)
+    self.current_player = players[next_index(current_index)]
+  end
+
+  def next_index(index)
+    if index == players.index(players.last)
+      0
+    else
+      index + 1
+    end
+  end
+
+  def player_gained_rank?(player, rank, count)
+    new_count = player.rank_count(rank)
+    new_count == count
   end
 
   private
