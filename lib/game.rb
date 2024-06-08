@@ -19,4 +19,8 @@ class Game
       players.each { |player| player.add_to_hand(deck.deal) }
     end
   end
+
+  def player_has_rank?(player, rank)
+    player.hand_has_rank?(rank)
+  end
 end
