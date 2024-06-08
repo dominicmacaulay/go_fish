@@ -23,4 +23,8 @@ class Player
   def hand_has_rank?(given_rank)
     hand.select { |card| card.rank == given_rank }.count.positive?
   end
+
+  def rank_count(given_rank)
+    hand.select { |card| card.rank == given_rank }.count
+  end
 end

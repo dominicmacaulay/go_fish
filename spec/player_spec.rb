@@ -78,4 +78,19 @@ RSpec.describe Player do
       expect(player.hand_has_rank?('3')).to be false
     end
   end
+
+  describe 'rank_count' do
+    before do
+      card1 = Card.new(rank: '2', suit: 'Hearts')
+      card2 = Card.new(rank: '2', suit: 'Spades')
+      card3 = Card.new(rank: '4', suit: 'Spades')
+      player.add_to_hand([card1, card2, card3])
+    end
+    it 'returns the number of 2s' do
+      expect(player.rank_count('2')).to eql 2
+    end
+    it 'returns the number of 4s' do
+      expect(player.rank_count('4')).to eql 1
+    end
+  end
 end

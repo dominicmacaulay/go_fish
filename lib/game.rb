@@ -28,14 +28,20 @@ class Game
   end
 
   def play_round(this_player:, other_player:, rank:)
+    make_transaction(this_player, other_player, rank)
+    # switch to the next player if the player's hand has not changed
+    message
+  end
+
+  private
+
+  def make_transaction(this_player, other_player, rank)
     if other_player.hand_has_rank?(rank)
       receive_card_from_player(this_player, other_player, rank)
     else
       receive_card_from_pond(this_player)
     end
   end
-
-  private
 
   def receive_card_from_pond(player)
     card = deck.deal
