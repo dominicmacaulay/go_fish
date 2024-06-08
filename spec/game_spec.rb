@@ -53,17 +53,22 @@ RSpec.describe Game do
       player2.add_to_hand([Card.new(rank: '4', suit: 'Hearts'), Card.new(rank: '9', suit: 'Spades')])
     end
     it 'runs transaction and returns message if the asked player has the card' do
-      message = 'P 1 took one 4 from P 2'
+      message = 'P 1 took one 4 from P 2.'
       expect(game.play_round(this_player: player1, other_player: player2, rank: '4')).to eql message
       expect(player1.hand.select { |card| card.rank == '4' }.count).to be 2
       expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
     end
     it 'runs transaction and returns message if the asked player has multiple cards' do
-        message = "P 1 took two 4's from P 2"
-        player2.add_to_hand(Card.new(rank: '4', suit: 'Spades'))
-        expect(game.play_round(this_player: player1, other_player: player2, rank: '4')).to eql message
-        expect(player1.hand.select { |card| card.rank == '4' }.count).to be 3
-        expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
+      message = "P 1 took two 4's from P 2."
+      player2.add_to_hand(Card.new(rank: '4', suit: 'Spades'))
+      expect(game.play_round(this_player: player1, other_player: player2, rank: '4')).to eql message
+      expect(player1.hand.select { |card| card.rank == '4' }.count).to be 3
+      expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
+    end
+    it 'returns Go Fish and draws from the pile if the other player doesn not have the rank' do
+      message = 'Go Fish! You took a Jack of Hearts from the pond.'
+      game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
+      expect(game.play_round(this_player: player1, other_player: player2, rank: '8')).to eql message
     end
   end
 end

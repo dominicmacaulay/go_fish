@@ -5,14 +5,15 @@ require_relative 'deck'
 
 # go fish game class
 class Game
-  attr_reader :players
+  attr_reader :players, :deck_cards
 
-  def initialize(players)
+  def initialize(players, deck_cards = nil)
     @players = players
+    @deck_cards = deck_cards
   end
 
   def deck
-    @deck ||= Deck.new
+    @deck ||= Deck.new(cards: deck_cards)
   end
 
   def start
@@ -27,18 +28,28 @@ class Game
   end
 
   def play_round(this_player:, other_player:, rank:)
-    receive_card_from_player(this_player, other_player, rank) if other_player.hand_has_rank?(rank)
+    if other_player.hand_has_rank?(rank)
+      receive_card_from_player(this_player, other_player, rank)
+    else
+      receive_card_from_pond(this_player)
+    end
   end
 
   private
+
+  def receive_card_from_pond(player)
+    card = deck.deal
+    player.add_to_hand(card)
+    "Go Fish! You took a #{card.rank} of #{card.suit} from the pond."
+  end
 
   def receive_card_from_player(this_player, other_player, rank)
     cards = other_player.remove_by_rank(rank)
     this_player.add_to_hand(cards)
     if cards.count == 1
-      "#{this_player.name} took one #{rank} from #{other_player.name}"
+      "#{this_player.name} took one #{rank} from #{other_player.name}."
     else
-      "#{this_player.name} took #{integer_to_string(cards.count)} #{rank}'s from #{other_player.name}"
+      "#{this_player.name} took #{integer_to_string(cards.count)} #{rank}'s from #{other_player.name}."
     end
   end
 
