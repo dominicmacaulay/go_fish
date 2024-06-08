@@ -43,9 +43,27 @@ RSpec.describe Game do
     it 'returns false when the player does not have the card' do
       expect(game.player_has_rank?(player1, '6')).to be false
       expect(game.player_has_rank?(player1, 'Ace')).to be false
+      expect(game.player_has_rank?(player2, '4')).to be false
     end
   end
 
   describe 'play_round' do
+    before do
+      player1.add_to_hand([Card.new(rank: '4', suit: 'Hearts'), Card.new(rank: '8', suit: 'Spades')])
+      player2.add_to_hand([Card.new(rank: '4', suit: 'Hearts'), Card.new(rank: '9', suit: 'Spades')])
+    end
+    it 'runs transaction and returns message if the asked player has the card' do
+      message = 'P 1 took one 4 from P 2'
+      expect(game.play_round(this_player: player1, other_player: player2, rank: '4')).to eql message
+      expect(player1.hand.select { |card| card.rank == '4' }.count).to be 2
+      expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
+    end
+    it 'runs transaction and returns message if the asked player has multiple cards' do
+        message = "P 1 took two 4's from P 2"
+        player2.add_to_hand(Card.new(rank: '4', suit: 'Spades'))
+        expect(game.play_round(this_player: player1, other_player: player2, rank: '4')).to eql message
+        expect(player1.hand.select { |card| card.rank == '4' }.count).to be 3
+        expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
+    end
   end
 end
