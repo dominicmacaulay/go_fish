@@ -22,7 +22,7 @@ RSpec.describe Book do
       expect(@book.cards).to include(@card4)
     end
     it 'should have the numerical value of the cards' do
-      expect(@book.rank).to be 2
+      expect(@book.rank).to be 3
     end
   end
 end

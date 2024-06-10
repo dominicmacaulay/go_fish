@@ -16,7 +16,7 @@ RSpec.describe Card do
       expect(@card.suit).to eql 'Hearts'
     end
     it 'should include the given value' do
-      expect(@card.value).to eql 2
+      expect(@card.value).to eql 3
     end
   end
 

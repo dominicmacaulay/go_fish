@@ -13,7 +13,7 @@ class Card
   end
 
   def value
-    @value ||= RANKS.index(rank)
+    @value ||= RANKS.index(rank) + 1
   end
 
   # possibly convert this to the original version and make a rank? method
