@@ -26,15 +26,20 @@ class Game
     end
   end
 
-  def player_has_rank?(player, rank)
-    player.hand_has_rank?(rank)
+  def deal_to_player_if_necessary
+    current_player.add_to_hand(deck.deal) if current_player.hand_count.zero?
+  end
+
+  def player_has_rank?(rank)
+    current_player.hand_has_rank?(rank)
   end
 
   def play_round(other_player:, rank:)
     player_rank_count = current_player.rank_count(rank).dup
     message = execute_transaction(other_player, rank)
-    switch_player unless player_gained_rank?(rank, player_rank_count)
+    player_gained = player_gained_rank?(rank, player_rank_count)
     current_player.make_book_if_possible
+    switch_player unless player_gained
     message
   end
 
@@ -69,16 +74,7 @@ class Game
 
   def switch_player
     current_index = players.index(current_player)
-    self.current_player = players[next_index(current_index)]
-  end
-
-  def next_index(index)
-    if index == players.index(players.last)
-      0
-    else
-      index + 1
-    end
-    # TODO: use modulus somehow
+    self.current_player = players[(current_index + 1) % players.count]
   end
 
   def player_gained_rank?(rank, count)

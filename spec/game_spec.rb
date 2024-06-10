@@ -34,6 +34,16 @@ RSpec.describe Game do
     end
   end
 
+  describe '#deal_to_player_if_necessary' do
+    it 'should only deal one card to the player if they do not have a card' do
+      expect(game.current_player.hand_count).to be 0
+      game.deal_to_player_if_necessary
+      expect(game.current_player.hand_count).to be 1
+      game.deal_to_player_if_necessary
+      expect(game.current_player.hand_count).to be 1
+    end
+  end
+
   describe '#play_round' do
     before do
       player1.add_to_hand([Card.new(rank: '4', suit: 'Hearts'), Card.new(rank: '8', suit: 'Spades')])
@@ -78,12 +88,21 @@ RSpec.describe Game do
     end
   end
 
-  describe 'set_winner' do
+  describe '#set_winner' do
     it 'declares the winner with the most books' do
       books = make_books(13)
       winner = Player.new(name: 'Winner', books: books.shift(7))
       loser = Player.new(name: 'Loser', books: books.shift(6))
       winner_game = Game.new([winner, loser])
+      winner_game.set_winner
+      expect(winner_game.winner.name).to eql winner.name
+    end
+    it 'in case of a book tie, declares the winner with the highest book value' do
+      books = make_books(13)
+      winner = Player.new(name: 'Winner', books: books.pop(6))
+      loser1 = Player.new(name: 'Loser', books: books.shift(6))
+      loser2 = Player.new(name: 'Loser', books: books.shift(1))
+      winner_game = Game.new([winner, loser1, loser2])
       winner_game.set_winner
       expect(winner_game.winner.name).to eql winner.name
     end
