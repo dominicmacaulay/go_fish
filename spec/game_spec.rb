@@ -78,6 +78,30 @@ RSpec.describe Game do
     end
   end
 
-  describe 'determine_winner' do
+  describe 'set_winner' do
+    it 'declares the winner with the most books' do
+      books = make_books(13)
+      winner = Player.new(name: 'Winner', books: books.shift(7))
+      loser = Player.new(name: 'Loser', books: books.shift(6))
+      winner_game = Game.new([winner, loser])
+      winner_game.set_winner
+      expect(winner_game.winner.name).to eql winner.name
+    end
+  end
+  def make_books(times)
+    deck = retrieve_one_deck
+    books = []
+    times.times do
+      books.push(Book.new(deck.shift))
+    end
+    books
+  end
+
+  def retrieve_one_deck
+    Card::RANKS.map do |rank|
+      Card::SUITS.flat_map do |suit|
+        Card.new(rank: rank, suit: suit)
+      end
+    end
   end
 end

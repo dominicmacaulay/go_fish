@@ -6,12 +6,13 @@ require_relative 'deck'
 # go fish game class
 class Game
   attr_reader :players, :deck_cards
-  attr_accessor :current_player
+  attr_accessor :current_player, :winner
 
   def initialize(players, deck_cards = nil)
     @players = players
     @deck_cards = deck_cards
     @current_player = @players.first
+    @winner = nil
   end
 
   def deck
@@ -37,14 +38,34 @@ class Game
     message
   end
 
-  def determine_winner
-    book_count = players.map(&:book_count)
-    if book_count == 13
-        
-    end
+  def set_winner
+    return unless players.map(&:book_count).sum == 13
+
+    self.winner = determine_winner
   end
 
   private
+
+  def determine_winner
+    possible_winners = players_with_highest_book_count
+    player_with_highest_book_value(possible_winners)
+  end
+
+  def player_with_highest_book_value(players)
+    maximum_value = 0
+    players.each do |player|
+      maximum_value = player.total_book_value if player.total_book_value > maximum_value
+    end
+    players.detect { |player| player.total_book_value == maximum_value }
+  end
+
+  def players_with_highest_book_count
+    maximum_value = 0
+    players.each do |player|
+      maximum_value = player.book_count if player.book_count > maximum_value
+    end
+    players.select { |player| player.book_count == maximum_value }
+  end
 
   def switch_player
     current_index = players.index(current_player)
@@ -57,7 +78,7 @@ class Game
     else
       index + 1
     end
-
+    # TODO: use modulus somehow
   end
 
   def player_gained_rank?(rank, count)

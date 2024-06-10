@@ -2,7 +2,8 @@
 
 # card game player class
 class Player
-  attr_accessor :name, :books, :hand
+  attr_accessor :books, :hand
+  attr_reader :name
 
   def initialize(name:, hand: [], books: [])
     @name = name
