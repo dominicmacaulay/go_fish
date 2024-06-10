@@ -18,6 +18,12 @@ class Player
     hand.count
   end
 
+  def total_book_value
+    total_value = 0
+    books.each { |book| total_value += book.rank }
+    total_value
+  end
+
   def add_to_hand(cards)
     hand.push(*cards)
   end
@@ -40,7 +46,7 @@ class Player
     hand.dup.each do |card|
       next unless rank_count(card.rank) >= 4
 
-      cards = hand.map { |other_card| card.rank == other_card.rank }
+      cards = hand.select { |other_card| card.rank == other_card.rank }
       hand.delete_if { |other_card| card.rank == other_card.rank }
       books.push(Book.new(cards))
     end

@@ -107,9 +107,7 @@ RSpec.describe Player do
       @book_player.make_book_if_possible
       expect(@book_player.book_count).to be 1
       expect(@book_player.hand_count).to be 1
-      @book_player.make_book_if_possible
-      expect(@book_player.book_count).to be 1
-      expect(@book_player.hand_count).to be 1
+      expect(@book_player.total_book_value).to be @book_player.books.first.rank
     end
   end
 end

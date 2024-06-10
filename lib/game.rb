@@ -31,7 +31,7 @@ class Game
 
   def play_round(other_player:, rank:)
     player_rank_count = current_player.rank_count(rank).dup
-    message = make_transaction(current_player, other_player, rank)
+    message = execute_transaction(current_player, other_player, rank)
     switch_player if player_gained_rank?(current_player, rank, player_rank_count)
     current_player.make_book_if_possible
     message
@@ -57,6 +57,7 @@ class Game
     else
       index + 1
     end
+
   end
 
   def player_gained_rank?(player, rank, count)
@@ -64,7 +65,7 @@ class Game
     new_count == count
   end
 
-  def make_transaction(this_player, other_player, rank)
+  def execute_transaction(this_player, other_player, rank)
     if other_player.hand_has_rank?(rank)
       receive_card_from_player(this_player, other_player, rank)
     else
