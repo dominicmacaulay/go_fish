@@ -130,13 +130,13 @@ RSpec.describe SocketServer do
     end
   end
 
-  describe 'create_runner' do
+  describe '#create_runner' do
     before do
       create_client('Player 1')
       create_client('Player 2')
       @game = @server.create_game_if_possible
     end
-    fit 'creates a game runner object with the correct clients attached' do
+    it 'creates a game runner object with the correct clients attached' do
       create_client('Player 3')
       runner = @server.run_game(@game)
       expect(runner).to respond_to(:start)

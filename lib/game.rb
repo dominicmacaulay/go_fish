@@ -6,12 +6,13 @@ require_relative 'deck'
 # go fish game class
 class Game
   attr_reader :players, :deck_cards
-  attr_accessor :current_player
+  attr_accessor :current_player, :winners
 
   def initialize(players, deck_cards = nil)
     @players = players
     @deck_cards = deck_cards
     @current_player = @players.first
+    @winners = nil
   end
 
   def deck
@@ -39,14 +40,18 @@ class Game
     player_gained = player_gained_rank?(rank, player_rank_count)
     current_player.make_book_if_possible
     switch_player unless player_gained
+    check_for_winner
     message
   end
 
-  def display_winner
-    return nil unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
-
-    winners = determine_winners
+  def display_winners
     winners.count > 1 ? tie_message_for_multiple_winners(winners) : single_winner_message(winners.first)
+  end
+
+  def check_for_winner
+    return unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
+
+    self.winners = determine_winners
   end
 
   private

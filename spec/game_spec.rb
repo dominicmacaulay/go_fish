@@ -124,20 +124,35 @@ RSpec.describe Game do
       expect(winner_game.display_winner).to eql message
     end
   end
-  def make_books(times)
-    deck = retrieve_one_deck
-    books = []
-    times.times do
-      books.push(Book.new(deck.shift))
-    end
-    books
-  end
-
-  def retrieve_one_deck
-    Card::RANKS.map do |rank|
-      Card::SUITS.flat_map do |suit|
-        Card.new(rank: rank, suit: suit)
+  describe 'smoke test' do
+    fit 'runs test' do
+      game.start
+      until game.winners
+        game.deal_to_player_if_necessary
+        current_index = game.players.index(game.current_player)
+        other_player = game.players[(current_index + 1) % game.players.count]
+        rank = game.current_player.hand.sample.rank
+        puts "#{game.current_player.name} is asking for #{rank}'s"
+        puts game.play_round(other_player: other_player, rank: rank)
       end
+      puts game.display_winners
+    end
+  end
+end
+
+def make_books(times)
+  deck = retrieve_one_deck
+  books = []
+  times.times do
+    books.push(Book.new(deck.shift))
+  end
+  books
+end
+
+def retrieve_one_deck
+  Card::RANKS.map do |rank|
+    Card::SUITS.flat_map do |suit|
+      Card.new(rank: rank, suit: suit)
     end
   end
 end

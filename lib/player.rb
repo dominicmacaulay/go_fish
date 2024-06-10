@@ -30,9 +30,10 @@ class Player
   end
 
   def remove_by_rank(rank)
-    hand.map do |card|
+    cards = hand.map do |card|
       hand.delete(card) if card.rank == rank
     end
+    cards.compact
   end
 
   def hand_has_rank?(given_rank)
