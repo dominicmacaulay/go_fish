@@ -6,13 +6,12 @@ require_relative 'deck'
 # go fish game class
 class Game
   attr_reader :players, :deck_cards
-  attr_accessor :current_player, :winner
+  attr_accessor :current_player
 
   def initialize(players, deck_cards = nil)
     @players = players
     @deck_cards = deck_cards
     @current_player = @players.first
-    @winner = nil
   end
 
   def deck
@@ -43,10 +42,10 @@ class Game
     message
   end
 
-  def set_winner
-    return unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
+  def winner
+    return nil unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
 
-    self.winner = determine_winner
+    determine_winner
   end
 
   private

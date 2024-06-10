@@ -95,7 +95,6 @@ RSpec.describe Game do
       loser = Player.new(name: 'Loser', books: books.shift(6))
       winner_game = Game.new([winner, loser], [0])
       winner_game.deck.deal
-      winner_game.set_winner
       expect(winner_game.winner.name).to eql winner.name
     end
     it 'in case of a book tie, declares the winner with the highest book value' do
@@ -105,7 +104,6 @@ RSpec.describe Game do
       loser2 = Player.new(name: 'Loser', books: books.shift(1))
       winner_game = Game.new([winner, loser1, loser2], [0])
       winner_game.deck.deal
-      winner_game.set_winner
       expect(winner_game.winner.name).to eql winner.name
     end
   end
