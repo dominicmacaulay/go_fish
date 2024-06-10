@@ -44,7 +44,7 @@ class Game
   end
 
   def set_winner
-    return unless players.map(&:book_count).sum == 13
+    return unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
 
     self.winner = determine_winner
   end

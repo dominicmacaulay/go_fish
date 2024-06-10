@@ -93,7 +93,8 @@ RSpec.describe Game do
       books = make_books(13)
       winner = Player.new(name: 'Winner', books: books.shift(7))
       loser = Player.new(name: 'Loser', books: books.shift(6))
-      winner_game = Game.new([winner, loser])
+      winner_game = Game.new([winner, loser], [0])
+      winner_game.deck.deal
       winner_game.set_winner
       expect(winner_game.winner.name).to eql winner.name
     end
@@ -102,7 +103,8 @@ RSpec.describe Game do
       winner = Player.new(name: 'Winner', books: books.pop(6))
       loser1 = Player.new(name: 'Loser', books: books.shift(6))
       loser2 = Player.new(name: 'Loser', books: books.shift(1))
-      winner_game = Game.new([winner, loser1, loser2])
+      winner_game = Game.new([winner, loser1, loser2], [0])
+      winner_game.deck.deal
       winner_game.set_winner
       expect(winner_game.winner.name).to eql winner.name
     end
