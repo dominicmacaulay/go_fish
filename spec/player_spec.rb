@@ -79,7 +79,7 @@ RSpec.describe Player do
     end
   end
 
-  describe 'rank_count' do
+  describe '#rank_count' do
     before do
       card1 = Card.new(rank: '2', suit: 'Hearts')
       card2 = Card.new(rank: '2', suit: 'Spades')
@@ -91,6 +91,25 @@ RSpec.describe Player do
     end
     it 'returns the number of 4s' do
       expect(player.rank_count('4')).to eql 1
+    end
+  end
+
+  describe '#make_book_if_possible' do
+    before do
+      card1 = Card.new(rank: '2', suit: 'Hearts')
+      card2 = Card.new(rank: '2', suit: 'Spades')
+      card3 = Card.new(rank: '2', suit: 'Clubs')
+      card4 = Card.new(rank: '2', suit: 'Diamonds')
+      card5 = Card.new(rank: '3', suit: 'Diamonds')
+      @book_player = Player.new(name: 'P1', hand: [card1, card2, card3, card4, card5])
+    end
+    it 'creates a book if the player has four of the same suit' do
+      @book_player.make_book_if_possible
+      expect(@book_player.book_count).to be 1
+      expect(@book_player.hand_count).to be 1
+      @book_player.make_book_if_possible
+      expect(@book_player.book_count).to be 1
+      expect(@book_player.hand_count).to be 1
     end
   end
 end

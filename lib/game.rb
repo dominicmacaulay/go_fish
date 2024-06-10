@@ -29,12 +29,22 @@ class Game
     player.hand_has_rank?(rank)
   end
 
-  def play_round(this_player:, other_player:, rank:)
-    player_rank_count = this_player.rank_count(rank).dup
-    message = make_transaction(this_player, other_player, rank)
-    switch_player if player_gained_rank?(this_player, rank, player_rank_count)
+  def play_round(other_player:, rank:)
+    player_rank_count = current_player.rank_count(rank).dup
+    message = make_transaction(current_player, other_player, rank)
+    switch_player if player_gained_rank?(current_player, rank, player_rank_count)
+    current_player.make_book_if_possible
     message
   end
+
+  def determine_winner
+    book_count = players.map(&:book_count)
+    if book_count == 13
+        
+    end
+  end
+
+  private
 
   def switch_player
     current_index = players.index(current_player)
@@ -53,8 +63,6 @@ class Game
     new_count = player.rank_count(rank)
     new_count == count
   end
-
-  private
 
   def make_transaction(this_player, other_player, rank)
     if other_player.hand_has_rank?(rank)
