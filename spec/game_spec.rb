@@ -73,6 +73,13 @@ RSpec.describe Game do
       game.current_player = player2
       expect(game.play_round(other_player: player1, rank: '9')).to eql message
     end
+    it 'returns a message indicating the pile is empty' do
+      message = 'Go Fish! Sorry, there are no fish in the pond (The draw pile is empty).'
+      game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
+      game.deck.deal
+      game.current_player = player2
+      expect(game.play_round(other_player: player1, rank: '9')).to eql message
+    end
     it 'changes the player if the player has not gained cards' do
       game.play_round(other_player: player2, rank: '8')
       expect(game.current_player).to be player2
@@ -88,23 +95,33 @@ RSpec.describe Game do
     end
   end
 
-  describe '#set_winner' do
+  describe '#display_winner' do
+    let(:books) { make_books(13) }
     it 'declares the winner with the most books' do
-      books = make_books(13)
       winner = Player.new(name: 'Winner', books: books.shift(7))
       loser = Player.new(name: 'Loser', books: books.shift(6))
       winner_game = Game.new([winner, loser], [0])
       winner_game.deck.deal
-      expect(winner_game.winner.name).to eql winner.name
+      message = 'Winner won the game with 7 books totalling in 28'
+      expect(winner_game.display_winner).to eql message
     end
     it 'in case of a book tie, declares the winner with the highest book value' do
-      books = make_books(13)
       winner = Player.new(name: 'Winner', books: books.pop(6))
       loser1 = Player.new(name: 'Loser', books: books.shift(6))
       loser2 = Player.new(name: 'Loser', books: books.shift(1))
       winner_game = Game.new([winner, loser1, loser2], [0])
       winner_game.deck.deal
-      expect(winner_game.winner.name).to eql winner.name
+      message = 'Winner won the game with 6 books totalling in 63'
+      expect(winner_game.display_winner).to eql message
+    end
+    it 'in case of total tie, display tie messge' do
+      winner = Player.new(name: 'Winner', books: [books[1], books[3], books[5], books[7], books[9], books[11]])
+      loser1 = Player.new(name: 'Loser', books: [books[0], books[2], books[4], books[8], books[10], books[12]])
+      loser2 = Player.new(name: 'Loser', books: [books[6]])
+      winner_game = Game.new([winner, loser1, loser2], [0])
+      winner_game.deck.deal
+      message = 'Winner and Loser tied with 6 books totalling in 42'
+      expect(winner_game.display_winner).to eql message
     end
   end
   def make_books(times)

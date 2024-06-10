@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 require_relative 'player'
 require_relative 'deck'
@@ -42,15 +42,30 @@ class Game
     message
   end
 
-  def winner
+  def display_winner
     return nil unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
 
-    determine_winner
+    winners = determine_winners
+    winners.count > 1 ? tie_message_for_multiple_winners(winners) : single_winner_message(winners.first)
   end
 
   private
 
-  def determine_winner
+  def single_winner_message(winner)
+    "#{winner.name} won the game with #{winner.book_count} books totalling in #{winner.total_book_value}"
+  end
+
+  def tie_message_for_multiple_winners(winners)
+    message = ''
+    winners.each do |winner|
+      message.concat('and ') if winner == winners.last
+      message.concat("#{winner.name} ")
+      message.concat(', ') if winner != winners.last && winner != winners[-2]
+    end
+    message.concat("tied with #{winners.first.book_count} books totalling in #{winners.first.total_book_value}")
+  end
+
+  def determine_winners
     possible_winners = players_with_highest_book_count
     player_with_highest_book_value(possible_winners)
   end
@@ -60,7 +75,7 @@ class Game
     players.each do |player|
       maximum_value = player.total_book_value if player.total_book_value > maximum_value
     end
-    players.detect { |player| player.total_book_value == maximum_value }
+    players.select { |player| player.total_book_value == maximum_value }
   end
 
   def players_with_highest_book_count
