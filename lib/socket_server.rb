@@ -7,17 +7,21 @@ require_relative 'game'
 
 # runs interactions between the clients and the server
 class SocketServer
-  attr_accessor :games, :pending_clients, :clients, :unnamed_clients, :can_send_no_clients_message
-  attr_reader :players_per_game, :server, :port_number
+  attr_accessor :games, :pending_clients, :clients, :unnamed_clients, :can_send_no_clients_message, :clients_not_greeted
+  attr_reader :players_per_game
 
-  def initialize(players_per_game = 2, port_number = 3336)
+  def initialize(players_per_game = 2)
     @players_per_game = players_per_game
     @games = []
     @pending_clients = []
     @unnamed_clients = []
     @clients = {}
-    @port_number = port_number
+    @clients_not_greeted = []
     @can_send_no_clients_message = true
+  end
+
+  def port_number
+    3336
   end
 
   def start
@@ -30,7 +34,7 @@ class SocketServer
 
   def accept_new_client
     client = @server.accept_nonblock
-    client.puts('Enter your name (at least 3 characters): ')
+    send_message_to_client(client, 'Enter your name (at least 3 characters): ')
     unnamed_clients.push(client)
     self.can_send_no_clients_message = true
   rescue IO::WaitReadable, Errno::EINTR
@@ -43,6 +47,29 @@ class SocketServer
     end
   end
 
+  def create_game_if_possible
+    if pending_clients.count >= players_per_game
+      games.push(Game.new(retrieve_players))
+      games.last
+    else
+      greet_ungreeted_clients
+    end
+  end
+
+  private
+
+  def greet_ungreeted_clients
+    clients_not_greeted.each { |client| send_message_to_client(client, 'Waiting for other player(s) to join') }
+    clients_not_greeted.clear
+    nil
+  end
+
+  def retrieve_players
+    players_per_game.times.map do
+      clients[pending_clients.shift]
+    end
+  end
+
   def capture_client_input(client, delay = 0.1)
     sleep(delay)
     client.read_nonblock(1000).chomp.downcase # not gets which blocks
@@ -50,14 +77,16 @@ class SocketServer
     nil
   end
 
-  private
+  def send_message_to_client(client, message)
+    client.puts(message)
+  end
 
   def create_player_if_possible(client)
     name = capture_client_input(client)
     return if name.nil?
 
-    if name.length >= 0 && name.length < 3
-      client.puts('Enter your name (at least 3 characters): ')
+    if name.length < 3
+      send_message_to_client(client, 'Retry! Enter your name (at least 3 characters): ')
     else
       create_client(client, name)
     end
@@ -71,6 +100,7 @@ class SocketServer
   end
 
   def create_client(client, name)
+    clients_not_greeted.push(client)
     pending_clients.push(client)
     unnamed_clients.delete(client)
     clients[client] = Player.new(name: name)
