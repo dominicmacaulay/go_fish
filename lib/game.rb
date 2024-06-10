@@ -31,8 +31,8 @@ class Game
 
   def play_round(other_player:, rank:)
     player_rank_count = current_player.rank_count(rank).dup
-    message = execute_transaction(current_player, other_player, rank)
-    switch_player if player_gained_rank?(current_player, rank, player_rank_count)
+    message = execute_transaction(other_player, rank)
+    switch_player unless player_gained_rank?(rank, player_rank_count)
     current_player.make_book_if_possible
     message
   end
@@ -60,32 +60,32 @@ class Game
 
   end
 
-  def player_gained_rank?(player, rank, count)
-    new_count = player.rank_count(rank)
-    new_count == count
+  def player_gained_rank?(rank, count)
+    new_count = current_player.rank_count(rank)
+    new_count != count
   end
 
-  def execute_transaction(this_player, other_player, rank)
+  def execute_transaction(other_player, rank)
     if other_player.hand_has_rank?(rank)
-      receive_card_from_player(this_player, other_player, rank)
+      receive_card_from_player(other_player, rank)
     else
-      receive_card_from_pond(this_player)
+      receive_card_from_pond
     end
   end
 
-  def receive_card_from_pond(player)
+  def receive_card_from_pond
     card = deck.deal
-    player.add_to_hand(card)
+    current_player.add_to_hand(card)
     "Go Fish! You took a #{card.rank} of #{card.suit} from the pond."
   end
 
-  def receive_card_from_player(this_player, other_player, rank)
+  def receive_card_from_player(other_player, rank)
     cards = other_player.remove_by_rank(rank)
-    this_player.add_to_hand(cards)
+    current_player.add_to_hand(cards)
     if cards.count == 1
-      "#{this_player.name} took one #{rank} from #{other_player.name}."
+      "#{current_player.name} took one #{rank} from #{other_player.name}."
     else
-      "#{this_player.name} took #{integer_to_string(cards.count)} #{rank}'s from #{other_player.name}."
+      "#{current_player.name} took #{integer_to_string(cards.count)} #{rank}'s from #{other_player.name}."
     end
   end
 
