@@ -84,6 +84,8 @@ class Game
   def execute_transaction(other_player, rank)
     if other_player.hand_has_rank?(rank)
       receive_card_from_player(other_player, rank)
+    elsif deck.cards.empty?
+      'Go Fish! Sorry, there are no fish in the pond (The draw pile is empty).'
     else
       receive_card_from_pond
     end
