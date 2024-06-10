@@ -3,7 +3,7 @@
 require 'socket'
 require_relative 'player'
 require_relative 'game'
-# require_relative 'socket_runner'
+require_relative 'socket_runner'
 
 # runs interactions between the clients and the server
 class SocketServer
@@ -50,13 +50,23 @@ class SocketServer
   def create_game_if_possible
     if pending_clients.count >= players_per_game
       games.push(Game.new(retrieve_players))
-      games.last
-    else
-      greet_ungreeted_clients
+      return games.last
     end
+    greet_ungreeted_clients
+  end
+
+  def run_game(game)
+    runner = create_runner(game)
+    runner.start
+    runner
   end
 
   private
+
+  def create_runner(game)
+    game_clients = game.players.map { |player| clients.key(player) }
+    SocketRunner.new(game, game_clients)
+  end
 
   def greet_ungreeted_clients
     clients_not_greeted.each { |client| send_message_to_client(client, 'Waiting for other player(s) to join') }
@@ -72,7 +82,7 @@ class SocketServer
 
   def capture_client_input(client, delay = 0.1)
     sleep(delay)
-    client.read_nonblock(1000).chomp.downcase # not gets which blocks
+    client.read_nonblock(1000).chomp # not gets which blocks
   rescue IO::WaitReadable
     nil
   end
