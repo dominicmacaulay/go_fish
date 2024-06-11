@@ -80,6 +80,14 @@ RSpec.describe SocketServer do
       expect(@server.clients).to be_empty
       expect(client1.capture_output).to match 'Retry'
     end
+    it 'sends retry message if the name is already in use' do
+      create_client('Dom')
+      client2 = create_name_test_client
+      client2.capture_output
+      client2.provide_input('Dom')
+      @server.assign_client_name_to_player
+      expect(client2.capture_output).to match 'in use'
+    end
     it 'creates a client/player in clients if a name is provided' do
       client1 = create_name_test_client
       client1.provide_input('Dom')

@@ -82,7 +82,7 @@ class SocketServer
 
   def capture_client_input(client, delay = 0.1)
     sleep(delay)
-    client.read_nonblock(1000).chomp # not gets which blocks
+    client.read_nonblock(1000).chomp
   rescue IO::WaitReadable
     nil
   end
@@ -95,11 +95,27 @@ class SocketServer
     name = capture_client_input(client)
     return if name.nil?
 
-    if name.length < 3
-      send_message_to_client(client, 'Retry! Enter your name (at least 3 characters): ')
-    else
-      create_client(client, name)
+    return if name_too_short?(client, name)
+    return if name_already_in_use?(client, name)
+
+    create_client(client, name)
+  end
+
+  def name_already_in_use?(client, name)
+    clients.each_value do |player|
+      if player.name == name
+        send_message_to_client(client, 'Sorry! That name is already in use!')
+        return true
+      end
     end
+    false
+  end
+
+  def name_too_short?(client, name)
+    return false unless name.length < 3
+
+    send_message_to_client(client, 'Retry! Enter your name (at least 3 characters): ')
+    true
   end
 
   def send_no_clients_message
