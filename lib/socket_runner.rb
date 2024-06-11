@@ -29,7 +29,7 @@ class SocketRunner
     return unless player_can_play?(game.current_player.dup)
 
     send_message(clients[game.current_player], game.current_player.display_hand)
-    return unless player_rank_chosen?
+    nil unless player_rank_chosen?
   end
 
   private
@@ -44,10 +44,10 @@ class SocketRunner
   end
 
   def prompt_rank
-    unless rank_prompted == true
-      send_message(clients[game.current_player], 'Enter the rank you want to ask for:')
-      self.rank_prompted = true
-    end
+    return unless rank_prompted == true
+
+    send_message(clients[game.current_player], 'Enter the rank you want to ask for:')
+    self.rank_prompted = true
   end
 
   def rank_invalid?(rank)

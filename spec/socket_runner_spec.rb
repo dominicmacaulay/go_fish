@@ -56,6 +56,19 @@ RSpec.describe SocketRunner do
       @runner.game_loop
       expect(@runner.rank).to be nil
     end
+    it 'should not change the rank if the player gives an invalid rank' do
+      @game.start
+      @client1.provide_input('14')
+      @runner.game_loop
+      expect(@runner.rank).to be nil
+    end
+    it 'should change the rank if the player gives a valid rank' do
+      @game.start
+      player1_card = @game.current_player.hand.first
+      @client1.provide_input(player1_card.rank)
+      @runner.game_loop
+      expect(@runner.rank).to match player1_card.rank
+    end
   end
 end
 
