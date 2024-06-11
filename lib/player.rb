@@ -61,7 +61,7 @@ class Player
     hand.each do |card|
       message.concat('and ') if card == hand.last
       message.concat("a #{card.rank} of #{card.suit}")
-      message.concat(', ') if card != hand.last
+      message.concat(', ') unless card == hand.last
     end
     message
   end

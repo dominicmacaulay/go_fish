@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 # class for the socket runner
 class SocketRunner
@@ -37,6 +37,7 @@ class SocketRunner
 
     result = game.play_round(other_player: opponent, rank: rank)
     clients.each_value { |client| send_message(client, result) }
+    clients.each_value { |client| send_message(client, '') } # rubocop:disable Style/CombinableLoops
 
     reset_class_variables
   end
@@ -54,13 +55,24 @@ class SocketRunner
   def show_info
     return if info_shown == true
 
-    message = show_opponents.compact
+    message = show_opponents(retrieve_opponents.compact)
+    send_message(clients[game.current_player], '')
     send_message(clients[game.current_player], message)
     send_message(clients[game.current_player], game.current_player.display_hand)
     self.info_shown = true
   end
 
-  def show_opponents
+  def show_opponents(opponents)
+    message = 'Your opponents are '
+    opponents.each do |opponent|
+      message.concat('and ') if opponent == opponents.last
+      message.concat(opponent)
+      message.concat(', ') unless opponent == opponents.last
+    end
+    message
+  end
+
+  def retrieve_opponents
     game.players.map do |player|
       player.name unless player == game.current_player
     end
