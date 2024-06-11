@@ -50,6 +50,7 @@ class SocketServer
   def create_game_if_possible
     if pending_clients.count >= players_per_game
       games.push(Game.new(retrieve_players))
+      clients_not_greeted.delete_if { |client| !pending_clients.include?(client) }
       return games.last
     end
     greet_ungreeted_clients
@@ -58,7 +59,6 @@ class SocketServer
   def run_game(game)
     runner = create_runner(game)
     runner.start
-    runner
   end
 
   def create_runner(game)
