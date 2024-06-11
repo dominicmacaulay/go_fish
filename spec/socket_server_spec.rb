@@ -142,9 +142,9 @@ RSpec.describe SocketServer do
       create_client('Player 2')
       @game = @server.create_game_if_possible
     end
-    xit 'creates a game runner object with the correct clients attached' do
+    it 'creates a game runner object with the correct clients attached' do
       create_client('Player 3')
-      runner = @server.run_game(@game)
+      runner = @server.create_runner(@game)
       expect(runner).to respond_to(:start)
       expect(runner.clients.length).to eql(@server.players_per_game)
       expect(runner.clients).not_to include(@server.pending_clients.first)

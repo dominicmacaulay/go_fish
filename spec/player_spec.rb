@@ -110,4 +110,13 @@ RSpec.describe Player do
       expect(@book_player.total_book_value).to be @book_player.books.first.rank
     end
   end
+  describe 'display_hand' do
+    it "displays all of the cards in the player's hand" do
+      card1 = Card.new(rank: '2', suit: 'Hearts')
+      card2 = Card.new(rank: '2', suit: 'Spades')
+      player.add_to_hand([card1, card2])
+      message = 'You have a 2 of Hearts, and a 2 of Spades'
+      expect(player.display_hand).to eql message
+    end
+  end
 end

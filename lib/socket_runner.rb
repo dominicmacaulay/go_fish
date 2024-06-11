@@ -20,19 +20,15 @@ class SocketRunner
 
   def play_game
     clients.each_value { |client| send_message(client, 'You have joined the game!') }
-    # game_loop until game.winners
-    # clients.each { |client| send_message(client, game.display_winners) }
+    game_loop until game.winners
+    clients.each { |client| send_message(client, game.display_winners) }
 
   end
 
   def game_loop
-    return unless check_player_and_get_rank
-  end
+    return unless player_can_play?(game.current_player.dup)
 
-  def check_player_and_get_rank
-    return false unless player_can_play?(game.current_player.dup)
-
-
+    send_message(game.current_player, game.current_player.display_hand)
   end
 
   private
@@ -47,7 +43,6 @@ class SocketRunner
   end
 
   def send_message(client, text)
-    binding.irb
     client.puts(text)
   end
 end

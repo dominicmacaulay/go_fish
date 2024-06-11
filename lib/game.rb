@@ -27,14 +27,14 @@ class Game
   end
 
   def deal_to_player_if_necessary
-    return true unless current_player.hand_count.zero?
+    return unless current_player.hand_count.zero?
 
     if deck.cards.empty?
       switch_player
       return 'Sorry, the pool is empty. You are going to have to wait this one out.'
     end
     5.times { current_player.add_to_hand(deck.deal) unless deck.cards.empty? }
-    true
+    nil
   end
 
   def match_player_to_name(name)

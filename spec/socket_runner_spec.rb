@@ -22,12 +22,20 @@ RSpec.describe SocketRunner do
   end
 
   describe 'check_player_and_get_rank' do
-    it 'should send a message and return false immediately if the player cannot play' do
+    before do
+        @client1.capture_output
+        @client2.capture_output
+    end
+    it 'should send a message and return immediately if the player cannot play' do
       @game.deck.clear_cards
       @runner.game_loop
       expect(@client1.capture_output).to match 'Sorry'
     end
-    it 'should return '
+    it "should display the player's hand if the player can play" do
+      @game.start
+      @runner.game_loop
+      expect(@client1.capture_output).to match 'You have'
+    end
   end
 end
 

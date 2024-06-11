@@ -1,4 +1,4 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
 
 # card game player class
 class Player
@@ -52,5 +52,15 @@ class Player
       hand.delete_if { |other_card| card.rank == other_card.rank }
       books.push(Book.new(cards))
     end
+  end
+
+  def display_hand
+    message = 'You have '
+    hand.each do |card|
+      message.concat('and ') if card == hand.last
+      message.concat("a #{card.rank} of #{card.suit}")
+      message.concat(', ') if card != hand.last
+    end
+    message
   end
 end
