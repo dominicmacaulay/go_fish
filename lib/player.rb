@@ -1,5 +1,7 @@
 # frozen_string_literal: false
 
+require_relative 'book'
+
 # card game player class
 class Player
   attr_accessor :books, :hand

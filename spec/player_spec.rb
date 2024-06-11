@@ -67,12 +67,12 @@ RSpec.describe Player do
     before do
       card1 = Card.new(rank: '2', suit: 'Hearts')
       card2 = Card.new(rank: '2', suit: 'Spades')
-      card3 = Card.new(rank: '4', suit: 'Spades')
+      card3 = Card.new(rank: 'Ace', suit: 'Spades')
       player.add_to_hand([card1, card2, card3])
     end
     it 'returns true if the player has any cards with the given rank in hand' do
       expect(player.hand_has_rank?('2')).to be true
-      expect(player.hand_has_rank?('4')).to be true
+      expect(player.hand_has_rank?('Ace')).to be true
     end
     it 'returns false if the player does not have any cards with the given rank in hand' do
       expect(player.hand_has_rank?('3')).to be false
@@ -110,7 +110,7 @@ RSpec.describe Player do
       expect(@book_player.total_book_value).to be @book_player.books.first.rank
     end
   end
-  describe 'display_hand' do
+  describe '#display_hand' do
     it "displays all of the cards in the player's hand" do
       card1 = Card.new(rank: '2', suit: 'Hearts')
       card2 = Card.new(rank: '2', suit: 'Spades')

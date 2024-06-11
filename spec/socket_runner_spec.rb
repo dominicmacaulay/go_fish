@@ -39,35 +39,71 @@ RSpec.describe SocketRunner do
       @runner.game_loop
       expect(@client1.capture_output).to match 'You have'
     end
-    it 'should prompt the player to give a rank' do
-      @game.start
-      @runner.game_loop
-      expect(@client1.capture_output).to match 'Enter the rank'
+    describe 'rank validation' do
+      it 'should prompt the player to give a rank' do
+        @game.start
+        @runner.game_loop
+        expect(@client1.capture_output).to match 'Enter the rank'
+      end
+      it 'should only prompt once' do
+        @game.start
+        @runner.game_loop
+        @client1.capture_output
+        @runner.game_loop
+        expect(@client1.capture_output).not_to match 'Enter the rank'
+      end
+      it "should return and not change the round's rank if the player has not given a rank" do
+        @game.start
+        @runner.game_loop
+        expect(@runner.rank).to be nil
+      end
+      it 'should not change the rank if the player gives an invalid rank' do
+        @game.start
+        @client1.provide_input('14')
+        @runner.game_loop
+        expect(@runner.rank).to be nil
+      end
+      it 'should change the rank if the player gives a valid rank' do
+        @game.start
+        player1_card = @game.current_player.hand.first
+        @client1.provide_input(player1_card.rank)
+        @runner.game_loop
+        expect(@runner.rank).to match player1_card.rank
+      end
     end
-    it 'should only prompt once' do
-      @game.start
-      @runner.game_loop
-      @client1.capture_output
-      @runner.game_loop
-      expect(@client1.capture_output).not_to match 'Enter the rank'
+    describe 'opponent validation' do
+      before do
+        @game.start
+        @runner.rank = '4'
+      end
+      it 'should prompt the player to give an opponent' do
+        @runner.game_loop
+        expect(@client1.capture_output).to match 'Enter the opponent'
+      end
+      it 'should only prompt once' do
+        @runner.game_loop
+        @client1.capture_output
+        @runner.game_loop
+        expect(@client1.capture_output).not_to match 'Enter the opponent'
+      end
+      it "should return and not change the round's opponent if the player has not given it" do
+        @runner.game_loop
+        expect(@runner.opponent).to be nil
+      end
+      it "should return and not change the round's opponent if the player gave an invalid one" do
+        @client1.provide_input('Mac')
+        @runner.game_loop
+        expect(@runner.opponent).to be nil
+      end
+      it "continue and change the round's opponent if the player gives valid input" do
+        @client1.provide_input(@client2_name)
+        @runner.game_loop
+        expect(@runner.opponent.name).to eql @client2_name
+      end
     end
-    it "should return and not change the round's rank if the player has not given a rank" do
-      @game.start
-      @runner.game_loop
-      expect(@runner.rank).to be nil
-    end
-    it 'should not change the rank if the player gives an invalid rank' do
-      @game.start
-      @client1.provide_input('14')
-      @runner.game_loop
-      expect(@runner.rank).to be nil
-    end
-    it 'should change the rank if the player gives a valid rank' do
-      @game.start
-      player1_card = @game.current_player.hand.first
-      @client1.provide_input(player1_card.rank)
-      @runner.game_loop
-      expect(@runner.rank).to match player1_card.rank
+    describe 'full game_loop' do
+      it 'should display the game result' do
+      end
     end
   end
 end
