@@ -73,17 +73,20 @@ RSpec.describe SocketRunner do
         @game.start
         @runner.game_loop
         expect(@runner.rank).to be nil
+        expect(@client1.capture_output).not_to match "#{@client1_name} took"
       end
-      it 'should not change the rank if the player gives an invalid rank' do
+      it 'should return and not change the rank if the player gives an invalid rank' do
         @game.start
         @client1.provide_input('14')
         @runner.game_loop
         expect(@runner.rank).to be nil
+        expect(@client1.capture_output).not_to match "#{@client1_name} took"
       end
-      it 'should change the rank if the player gives a valid rank' do
+      it 'should continue and change the rank if the player gives a valid rank' do
         @game.start
         player1_card = @game.current_player.hand.first
         @client1.provide_input(player1_card.rank)
+        expect(@runner).to receive(:player_opponent_chosen?)
         @runner.game_loop
         expect(@runner.rank).to match player1_card.rank
       end
@@ -106,16 +109,18 @@ RSpec.describe SocketRunner do
       it "should return and not change the round's opponent if the player has not given it" do
         @runner.game_loop
         expect(@runner.opponent).to be nil
+        expect(@client1.capture_output).not_to match "#{@client1_name} took"
       end
       it "should return and not change the round's opponent if the player gave an invalid one" do
         @client1.provide_input('Mac')
         @runner.game_loop
         expect(@runner.opponent).to be nil
+        expect(@client1.capture_output).not_to match "#{@client1_name} took"
       end
-      it "continue and change the round's opponent if the player gives valid input" do
+      it 'continues if the player gives a valid opponent' do
         @client1.provide_input(@client2_name)
         @runner.game_loop
-        expect(@runner.opponent.name).to eql @client2_name
+        expect(@client1.capture_output).to match "#{@client1_name} took"
       end
     end
     describe 'full game_loop' do
@@ -131,6 +136,14 @@ RSpec.describe SocketRunner do
       it 'should display the game result' do
         @runner.game_loop
         expect(@client1.capture_output).to match "#{@client1_name} took"
+      end
+      it 'should reset all of the variables after each round' do
+        @runner.game_loop
+        expect(@runner.info_shown).to be false
+        expect(@runner.rank).to be nil
+        expect(@runner.opponent).to be nil
+        expect(@runner.rank_prompted).to be false
+        expect(@runner.opponent_prompted).to be false
       end
     end
   end

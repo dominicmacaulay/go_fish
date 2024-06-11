@@ -22,7 +22,9 @@ class SocketRunner
 
   def play_game
     clients.each_value { |client| send_message(client, 'You have joined the game!') }
+
     game_loop until game.winners
+
     results = game.display_winners
     clients.each_value { |client| send_message(client, results) }
   end
@@ -35,9 +37,19 @@ class SocketRunner
 
     result = game.play_round(other_player: opponent, rank: rank)
     clients.each_value { |client| send_message(client, result) }
+
+    reset_class_variables
   end
 
   private
+
+  def reset_class_variables
+    self.info_shown = false
+    self.rank = nil
+    self.opponent = nil
+    self.rank_prompted = false
+    self.opponent_prompted = false
+  end
 
   def show_info
     return if info_shown == true
