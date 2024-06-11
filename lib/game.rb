@@ -40,7 +40,7 @@ class Game
     player_gained = player_gained_rank?(rank, player_rank_count)
     current_player.make_book_if_possible
     switch_player unless player_gained
-    check_for_winner
+    check_for_winners
     message
   end
 
@@ -48,7 +48,7 @@ class Game
     winners.count > 1 ? tie_message_for_multiple_winners(winners) : single_winner_message(winners.first)
   end
 
-  def check_for_winner
+  def check_for_winners
     return unless players.map(&:hand_count).sum.zero? && deck.cards.empty?
 
     self.winners = determine_winners

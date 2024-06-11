@@ -95,15 +95,15 @@ RSpec.describe Game do
     end
   end
 
-  describe '#display_winner' do
+  describe '#display_winners' do
     let(:books) { make_books(13) }
     it 'declares the winner with the most books' do
       winner = Player.new(name: 'Winner', books: books.shift(7))
       loser = Player.new(name: 'Loser', books: books.shift(6))
       winner_game = Game.new([winner, loser], [0])
       winner_game.deck.deal
-      message = 'Winner won the game with 7 books totalling in 28'
-      expect(winner_game.display_winner).to eql message
+      winner_game.check_for_winners
+      expect(winner_game.display_winners).to eql 'Winner won the game with 7 books totalling in 28'
     end
     it 'in case of a book tie, declares the winner with the highest book value' do
       winner = Player.new(name: 'Winner', books: books.pop(6))
@@ -111,8 +111,8 @@ RSpec.describe Game do
       loser2 = Player.new(name: 'Loser', books: books.shift(1))
       winner_game = Game.new([winner, loser1, loser2], [0])
       winner_game.deck.deal
-      message = 'Winner won the game with 6 books totalling in 63'
-      expect(winner_game.display_winner).to eql message
+      winner_game.check_for_winners
+      expect(winner_game.display_winners).to eql 'Winner won the game with 6 books totalling in 63'
     end
     it 'in case of total tie, display tie messge' do
       winner = Player.new(name: 'Winner', books: [books[1], books[3], books[5], books[7], books[9], books[11]])
@@ -120,12 +120,12 @@ RSpec.describe Game do
       loser2 = Player.new(name: 'Loser', books: [books[6]])
       winner_game = Game.new([winner, loser1, loser2], [0])
       winner_game.deck.deal
-      message = 'Winner and Loser tied with 6 books totalling in 42'
-      expect(winner_game.display_winner).to eql message
+      winner_game.check_for_winners
+      expect(winner_game.display_winners).to eql 'Winner and Loser tied with 6 books totalling in 42'
     end
   end
   describe 'smoke test' do
-    fit 'runs test' do
+    it 'runs test' do
       game.start
       until game.winners
         game.deal_to_player_if_necessary
