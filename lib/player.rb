@@ -59,7 +59,7 @@ class Player
   def display_hand
     message = 'You have '
     hand.each do |card|
-      message.concat('and ') if card == hand.last
+      message.concat('and ') if card == hand.last && card != hand.first
       message.concat("a #{card.rank} of #{card.suit}")
       message.concat(', ') unless card == hand.last
     end

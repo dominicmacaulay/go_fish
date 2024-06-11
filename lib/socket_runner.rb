@@ -36,13 +36,20 @@ class SocketRunner
     return unless player_rank_chosen? && player_opponent_chosen?
 
     result = game.play_round(other_player: opponent, rank: rank)
-    clients.each_value { |client| send_message(client, result) }
-    clients.each_value { |client| send_message(client, '') } # rubocop:disable Style/CombinableLoops
+    display_result(result)
 
     reset_class_variables
   end
 
   private
+
+  def display_result(result)
+    clients.each_value do |client|
+      send_message(client, '')
+      send_message(client, result)
+      send_message(client, '')
+    end
+  end
 
   def reset_class_variables
     self.info_shown = false
@@ -65,7 +72,7 @@ class SocketRunner
   def show_opponents(opponents)
     message = 'Your opponents are '
     opponents.each do |opponent|
-      message.concat('and ') if opponent == opponents.last
+      message.concat('and ') if opponent == opponents.last && opponent != opponents.first
       message.concat(opponent)
       message.concat(', ') unless opponent == opponents.last
     end
