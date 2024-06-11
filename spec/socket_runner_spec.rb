@@ -102,7 +102,18 @@ RSpec.describe SocketRunner do
       end
     end
     describe 'full game_loop' do
+      before do
+        @game.start
+        player1_card = @game.current_player.hand.first
+        @runner.game_loop
+        @client1.provide_input(player1_card.rank)
+        @runner.game_loop
+        @client1.capture_output
+        @client1.provide_input(@client2_name)
+      end
       it 'should display the game result' do
+        @runner.game_loop
+        expect(@client1.capture_output).to match "#{@client1_name} took"
       end
     end
   end

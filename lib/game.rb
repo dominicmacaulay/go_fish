@@ -130,7 +130,7 @@ class Game
   def receive_card_from_pond
     card = deck.deal
     current_player.add_to_hand(card)
-    "Go Fish! You took a #{card.rank} of #{card.suit} from the pond."
+    "Go Fish! #{current_player.name} took a #{card.rank} of #{card.suit} from the pond."
   end
 
   def receive_card_from_player(other_player, rank)

@@ -31,7 +31,8 @@ class SocketRunner
     send_message(clients[game.current_player], game.current_player.display_hand)
     return unless player_rank_chosen? && player_opponent_chosen?
 
-
+    result = game.play_round(other_player: opponent, rank: rank)
+    clients.each_value { |client| send_message(client, result) }
   end
 
   private

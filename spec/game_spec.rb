@@ -69,12 +69,12 @@ RSpec.describe Game do
       expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
     end
     it 'returns Go Fish and draws from the pile if the other player doesn not have the rank' do
-      message = 'Go Fish! You took a Jack of Hearts from the pond.'
+      message = 'Go Fish! P 1 took a Jack of Hearts from the pond.'
       game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
       expect(game.play_round(other_player: player2, rank: '8')).to eql message
     end
     it 'returns Go Fish and draws from the pile if the other player doesn not have the rank' do
-      message = 'Go Fish! You took a Jack of Hearts from the pond.'
+      message = 'Go Fish! P 2 took a Jack of Hearts from the pond.'
       game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])
       game.current_player = player2
       expect(game.play_round(other_player: player1, rank: '9')).to eql message
