@@ -38,9 +38,15 @@ RSpec.describe Game do
     it 'should only deal one card to the player if they do not have a card' do
       expect(game.current_player.hand_count).to be 0
       game.deal_to_player_if_necessary
-      expect(game.current_player.hand_count).to be 1
+      expect(game.current_player.hand_count).to be 5
       game.deal_to_player_if_necessary
-      expect(game.current_player.hand_count).to be 1
+      expect(game.current_player.hand_count).to be 5
+    end
+    it 'displays a message if the deck is empty' do
+      empty_deck_game = Game.new([player1, player2], [0])
+      empty_deck_game.deck.deal
+      message = 'Sorry, the pool is empty. You are going to have to wait this one out.'
+      expect(empty_deck_game.deal_to_player_if_necessary).to eql message
     end
   end
 
@@ -124,6 +130,20 @@ RSpec.describe Game do
       expect(winner_game.display_winners).to eql 'Winner and Loser tied with 6 books totalling in 42'
     end
   end
+
+  describe 'match_player_to_name' do
+    it 'should return true if the given name belongs to an opponent' do
+      # it tests the current player, which is automatically set to player one
+      expect(game.match_player_to_name(player2.name)).to eql player2
+    end
+    it 'should return a message if the given name is the current players name' do
+      expect(game.match_player_to_name(game.current_player.name)).to eql 'You cannot enter your own name!'
+    end
+    it 'should return a message if the given name does not belong to a player' do
+      expect(game.match_player_to_name('Donkey Man')).to eql "You must enter a valid player's name"
+    end
+  end
+
   describe 'smoke test' do
     it 'runs test' do
       game.start

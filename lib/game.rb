@@ -27,7 +27,22 @@ class Game
   end
 
   def deal_to_player_if_necessary
-    current_player.add_to_hand(deck.deal) if current_player.hand_count.zero?
+    return unless current_player.hand_count.zero?
+
+    if deck.cards.empty?
+      switch_player
+      return 'Sorry, the pool is empty. You are going to have to wait this one out.'
+    end
+    5.times { current_player.add_to_hand(deck.deal) }
+  end
+
+  def match_player_to_name(name)
+    return 'You cannot enter your own name!' if name == current_player.name
+
+    players.each do |player|
+      return player if player.name == name
+    end
+    "You must enter a valid player's name"
   end
 
   def player_has_rank?(rank)
