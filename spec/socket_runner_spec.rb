@@ -34,10 +34,18 @@ RSpec.describe SocketRunner do
       expect(@client1.capture_output).to match 'Sorry'
       expect(@game.current_player.name).to eql @client2_name
     end
-    describe "shows the player's hand each turn" do
+    describe "shows the player's hand and opponents each turn" do
       before do
         @game.start
         @runner.game_loop
+      end
+      it "should display the player's opponents" do
+        expect(@client1.capture_output).to match @client2_name
+      end
+      it "should display the player's opponents once" do
+        expect(@client1.capture_output).to match @client2_name
+        @runner.game_loop
+        expect(@client1.capture_output).not_to match @client2_name
       end
       it "should display the player's hand if the player can play" do
         expect(@client1.capture_output).to match 'You have'

@@ -3,12 +3,12 @@
 # class for the socket runner
 class SocketRunner
   attr_reader :game, :clients
-  attr_accessor :rank, :opponent, :rank_prompted, :opponent_prompted, :hand_shown
+  attr_accessor :rank, :opponent, :rank_prompted, :opponent_prompted, :info_shown
 
   def initialize(game, clients)
     @game = game
     @clients = clients
-    @hand_shown = false
+    @info_shown = false
     @rank = nil
     @opponent = nil
     @rank_prompted = false
@@ -30,7 +30,7 @@ class SocketRunner
   def game_loop
     return unless player_can_play?(game.current_player.dup)
 
-    show_hand
+    show_info
     return unless player_rank_chosen? && player_opponent_chosen?
 
     result = game.play_round(other_player: opponent, rank: rank)
@@ -39,11 +39,19 @@ class SocketRunner
 
   private
 
-  def show_hand
-    return if hand_shown == true
+  def show_info
+    return if info_shown == true
 
+    message = show_opponents.compact
+    send_message(clients[game.current_player], message)
     send_message(clients[game.current_player], game.current_player.display_hand)
-    self.hand_shown = true
+    self.info_shown = true
+  end
+
+  def show_opponents
+    game.players.map do |player|
+      player.name unless player == game.current_player
+    end
   end
 
   def player_opponent_chosen?
