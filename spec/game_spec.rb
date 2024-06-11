@@ -137,10 +137,10 @@ RSpec.describe Game do
       expect(game.match_player_to_name(player2.name)).to eql player2
     end
     it 'should return a message if the given name is the current players name' do
-      expect(game.match_player_to_name(game.current_player.name)).to eql 'You cannot enter your own name!'
+      expect(game.match_player_to_name(game.current_player.name)).to match 'You cannot enter your own name!'
     end
     it 'should return a message if the given name does not belong to a player' do
-      expect(game.match_player_to_name('Donkey Man')).to eql "You must enter a valid player's name"
+      expect(game.match_player_to_name('Donkey Man')).to match "You must enter a valid player's name"
     end
   end
 

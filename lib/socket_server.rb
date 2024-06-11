@@ -61,12 +61,13 @@ class SocketServer
     runner
   end
 
-  private
-
   def create_runner(game)
-    game_clients = game.players.map { |player| clients.key(player) }
-    SocketRunner.new(game, game_clients)
+    clients_duplicate = clients.dup
+    game_clients = clients_duplicate.keep_if { |key, value| game.players.include?(value) }
+    SocketRunner.new(game, game_clients.invert)
   end
+
+  private
 
   def greet_ungreeted_clients
     clients_not_greeted.each { |client| send_message_to_client(client, 'Waiting for other player(s) to join') }

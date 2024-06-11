@@ -4,7 +4,8 @@ require_relative 'card'
 
 # deck class for a card game
 class Deck
-  attr_reader :cards, :stack_number
+  attr_reader :stack_number
+  attr_accessor :cards
 
   def initialize(stack_number: 1, cards: nil)
     @stack_number = stack_number
@@ -17,6 +18,10 @@ class Deck
 
   def shuffle(seed = Random.new)
     cards.shuffle!(random: seed)
+  end
+
+  def clear_cards
+    self.cards = []
   end
 
   private
