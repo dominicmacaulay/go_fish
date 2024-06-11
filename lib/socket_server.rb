@@ -105,7 +105,7 @@ class SocketServer
   def name_already_in_use?(client, name)
     clients.each_value do |player|
       if player.name == name
-        send_message_to_client(client, 'Sorry! That name is already in use!')
+        send_message_to_client(client, 'Sorry! That name is already in use! Try Again:')
         return true
       end
     end

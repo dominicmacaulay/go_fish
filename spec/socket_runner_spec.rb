@@ -9,8 +9,10 @@ RSpec.describe SocketRunner do
     @server = SocketServer.new
     @server.start
     sleep(0.1)
-    @client1 = create_client('P 1')
-    @client2 = create_client('P 2')
+    @client1_name = 'P 1'
+    @client2_name = 'P 2'
+    @client1 = create_client(@client1_name)
+    @client2 = create_client(@client2_name)
     @game = @server.create_game_if_possible
     @runner = @server.create_runner(@game)
   end
@@ -21,20 +23,38 @@ RSpec.describe SocketRunner do
     @client2.close
   end
 
-  describe 'check_player_and_get_rank' do
+  describe 'game_loop' do
     before do
-        @client1.capture_output
-        @client2.capture_output
+      @client1.capture_output
+      @client2.capture_output
     end
     it 'should send a message and return immediately if the player cannot play' do
       @game.deck.clear_cards
       @runner.game_loop
       expect(@client1.capture_output).to match 'Sorry'
+      expect(@game.current_player.name).to eql @client2_name
     end
     it "should display the player's hand if the player can play" do
       @game.start
       @runner.game_loop
       expect(@client1.capture_output).to match 'You have'
+    end
+    it 'should prompt the player to give a rank' do
+      @game.start
+      @runner.game_loop
+      expect(@client1.capture_output).to match 'Enter the rank'
+    end
+    it 'should only prompt once' do
+      @game.start
+      @runner.game_loop
+      @client1.capture_output
+      @runner.game_loop
+      expect(@client1.capture_output).not_to match 'Enter the rank'
+    end
+    it "should return and not change the round's rank if the player has not given a rank" do
+      @game.start
+      @runner.game_loop
+      expect(@runner.rank).to be nil
     end
   end
 end
