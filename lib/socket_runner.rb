@@ -21,7 +21,10 @@ class SocketRunner
   end
 
   def play_game
-    clients.each_value { |client| send_message(client, 'You have joined the game!') }
+    clients.each_value do |client|
+      send_message(client, 'You have joined the game!')
+      send_message(client, '')
+    end
 
     game_loop until game.winners
 
@@ -62,8 +65,8 @@ class SocketRunner
   def show_info
     return if info_shown == true
 
+    send_message(clients[game.current_player], "Your book count is #{game.current_player.book_count}")
     message = show_opponents(retrieve_opponents.compact)
-    send_message(clients[game.current_player], '')
     send_message(clients[game.current_player], message)
     send_message(clients[game.current_player], game.current_player.display_hand)
     self.info_shown = true
@@ -108,7 +111,7 @@ class SocketRunner
   def prompt_opponent_choice
     return if opponent_prompted == true
 
-    send_message(clients[game.current_player], 'Enter the opponent you want to ask:')
+    send_message(clients[game.current_player], 'Enter the opponent you want to ask: ')
     self.opponent_prompted = true
   end
 
@@ -126,13 +129,13 @@ class SocketRunner
   def prompt_rank_choice
     return if rank_prompted == true
 
-    send_message(clients[game.current_player], 'Enter the rank you want to ask for:')
+    send_message(clients[game.current_player], 'Enter the rank you want to ask for: ')
     self.rank_prompted = true
   end
 
   def rank_invalid?(rank)
     unless game.player_has_rank?(rank)
-      send_message(clients[game.current_player], 'Invalid_input. Try again:')
+      send_message(clients[game.current_player], 'Invalid input. Try again: ')
       return true
     end
     false
@@ -144,7 +147,7 @@ class SocketRunner
 
     current_player = game.players.detect { |game_player| game_player.name == player.name }
     send_message(clients[current_player], message)
-    false
+    message.include?('took cards')
   end
 
   def send_message(client, text)

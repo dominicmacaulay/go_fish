@@ -34,16 +34,16 @@ class Game
       return 'Sorry, the pool is empty. You are going to have to wait this one out.'
     end
     5.times { current_player.add_to_hand(deck.deal) unless deck.cards.empty? }
-    nil
+    'You took cards from the pond since their hand was empty.'
   end
 
   def match_player_to_name(name)
-    return 'You cannot enter your own name! Try again:' if name == current_player.name
+    return 'You cannot enter your own name! Try again: ' if name == current_player.name
 
     players.each do |player|
       return player if player.name == name
     end
-    "You must enter a valid player's name. Try again:"
+    "You must enter a valid player's name. Try again: "
   end
 
   def player_has_rank?(rank)
@@ -54,7 +54,7 @@ class Game
     player_rank_count = current_player.rank_count(rank).dup
     message = execute_transaction(other_player, rank)
     player_gained = player_gained_rank?(rank, player_rank_count)
-    current_player.make_book_if_possible
+    message.concat(" And created a book of #{rank}'s.") if current_player.make_book_if_possible == true
     switch_player unless player_gained
     check_for_winners
     message

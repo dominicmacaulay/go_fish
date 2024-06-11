@@ -68,6 +68,13 @@ RSpec.describe Game do
       expect(player1.hand.select { |card| card.rank == '4' }.count).to be 3
       expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
     end
+    it 'runs transaction and returns message if the current player creates book' do
+      message = "P 1 took three 4's from P 2. And created a book of 4's."
+      player2.add_to_hand([Card.new(rank: '4', suit: 'Clubs'), Card.new(rank: '4', suit: 'Diamonds')])
+      expect(game.play_round(other_player: player2, rank: '4')).to eql message
+      expect(player1.book_count).to be 1
+      expect(player2.hand.select { |card| card.rank == '4' }.count).to be 0
+    end
     it 'returns Go Fish and draws from the pile if the other player doesn not have the rank' do
       message = 'Go Fish! P 1 took a Jack of Hearts from the pond.'
       game = Game.new([player1, player2], [Card.new(rank: 'Jack', suit: 'Hearts')])

@@ -32,10 +32,14 @@ class Player
   end
 
   def remove_by_rank(rank)
-    cards = hand.map do |card|
-      hand.delete(card) if card.rank == rank
-    end
-    cards.compact
+    # cards = hand.map do |card|
+    #   hand.delete(card) if card.rank == rank
+    # end
+    # cards.compact
+    cards = hand.dup
+    hand.delete_if { |card| card.rank == rank }
+    cards.delete_if { |card| card.rank != rank}
+    cards
   end
 
   def hand_has_rank?(given_rank)
@@ -46,14 +50,14 @@ class Player
     hand.select { |card| card.rank == given_rank }.count
   end
 
-  def make_book_if_possible # rubocop:disable Metrics/AbcSize
+  def make_book_if_possible
     hand.dup.each do |card|
       next unless rank_count(card.rank) >= 4
 
-      cards = hand.select { |other_card| card.rank == other_card.rank }
-      hand.delete_if { |other_card| card.rank == other_card.rank }
-      books.push(Book.new(cards))
+      make_book(card)
+      return true
     end
+    false
   end
 
   def display_hand
@@ -64,5 +68,13 @@ class Player
       message.concat(', ') unless card == hand.last
     end
     message
+  end
+
+  private
+
+  def make_book(card)
+    cards = hand.select { |other_card| card.rank == other_card.rank }
+    hand.delete_if { |other_card| card.rank == other_card.rank }
+    books.push(Book.new(cards))
   end
 end
